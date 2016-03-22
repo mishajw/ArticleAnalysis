@@ -4,9 +4,7 @@ import Data.List
 
 -- |Get a word count of a string
 wordCount :: String -> [(String, Int)]
-wordCount full =
-  let split = splitOn ' ' full in
-  count split 
+wordCount full = count (splitOn ' ' full)
 
 -- |Split a a list by a delimiter
 splitOn :: (Eq a) => a -> [a]  -> [[a]]
