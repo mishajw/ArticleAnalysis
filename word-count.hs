@@ -2,12 +2,13 @@ module WordCount where
 
 import Data.List
 
+-- |Get a word count of a string
 wordCount :: String -> [(String, Int)]
 wordCount full =
   let split = splitOn ' ' full in
   count split 
 
--- Split a a list by a delimiter
+-- |Split a a list by a delimiter
 splitOn :: (Eq a) => a -> [a]  -> [[a]]
 splitOn _ [] = []
 splitOn del (a : as) =
@@ -17,7 +18,7 @@ splitOn del (a : as) =
     [] -> [[a]]
     (as' : ass') -> (a : as') : ass'
 
--- Count the repeated values in an ordered list
+-- |Count the repeated values in an ordered list
 count :: (Eq a, Ord a) => [a] -> [(a, Int)]
 count as = count' (sort as) 0 where
   count' (hd1 : tl1@(hd2 : tl2)) acc =
