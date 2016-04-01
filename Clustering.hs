@@ -2,11 +2,13 @@ module Clustering where
 
 import Data.List
 
+defaultIterations = 100
+
 -- |K-means clustering.
 -- |Takes Comparator, Averager, amount of clusters, and the list to cluster.
 kmeans :: (Eq a, Ord b, Num b) => (a -> a -> b) -> ([a] -> a) -> Int -> [a] -> [[a]]
 kmeans cmp avg n as =
-  kmeans' cmp avg as (take n as) 100 where
+  kmeans' cmp avg as (take n as) defaultIterations where
 
   -- |Also takes the current clusters, and iterations to go
   kmeans' :: (Eq a, Ord b, Num b) => (a -> a -> b) -> ([a] -> a) -> [a] -> [a] -> Int -> [[a]]
@@ -30,11 +32,4 @@ kmeans cmp avg n as =
       let ((centre, children) : rs) = sortBy (\(c, _) (c', _) -> compare (cmp a c) (cmp a c')) rest in
       -- Append current to head
       (centre, a : children) : rs
-
-kmeansTest = kmeans cmpInt avgInt 4 [1, 1, 3, 3, 10, 100, 10, 10, 200, 200, 200, 1, 1, 1, 1, 1] where
-  cmpInt :: Int -> Int -> Int
-  cmpInt a b = abs (a - b)
-  avgInt :: [Int] -> Int
-  avgInt as@(_:_) = ((sum as) `div` (length as)) :: Int
-  avgInt _ = 0
 
