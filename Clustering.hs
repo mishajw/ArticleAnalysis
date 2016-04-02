@@ -33,3 +33,11 @@ kmeans cmp avg n as =
       -- Append current to head
       (centre, a : children) : rs
 
+testKmeans = kmeans cmp avg 4 [1,2,3,7,8,9] where
+  
+  cmp :: Int -> Int -> Int
+  cmp a b = abs (a - b)
+
+  avg :: [Int] -> Int
+  avg is = (sum is) `div` (length is)
+
