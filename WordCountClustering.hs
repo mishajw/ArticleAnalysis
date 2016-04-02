@@ -33,8 +33,8 @@ cmpWordCount c1 c2 =
 -- |Get the average for a list of word counts
 avgWordCount :: [[(String, Int)]] -> [(String, Int)]
 avgWordCount wcs =
-  let wcs' = map (map (\(s, i) -> (s, [i]))) wcs in
-  let merged = foldl mergeWordCounts [] wcs' in
+  let (wc' : wcs') = map (map (\(s, i) -> (s, [i]))) wcs in
+  let merged = foldl mergeWordCounts wc' wcs' in
   map (\(s, is) -> (s, (sum is) `div` (length is))) merged
 
 -- |Merge two word counts, must be sorted alphabetically
