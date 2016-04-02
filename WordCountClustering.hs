@@ -40,13 +40,13 @@ avgWordCount wcs =
 -- |Merge two word counts, must be sorted alphabetically
 mergeWordCounts :: [(String, [Int])] -> [(String, [Int])] -> [(String, [Int])]
 mergeWordCounts [] [] = []
-mergeWordCounts cs@(_:_) [] = cs
-mergeWordCounts [] cs@(_:_) = cs
+mergeWordCounts cs@(_:_) [] = map (\(s, is) -> (s, 0 : is)) cs
+mergeWordCounts [] cs@(_:_) = map (\(s, is) -> (s, 0 : is)) cs
 mergeWordCounts c1@((s1, i1) : cs1) c2@((s2, i2) : cs2) =
   if s1 == s2
   then (s1, i1 ++ i2) : mergeWordCounts cs1 cs2
   else
     if s1 < s2
-    then (s1, i1) : mergeWordCounts cs1 c2
-    else (s2, i2) : mergeWordCounts c1 cs2
+    then (s1, 0 : i1) : mergeWordCounts cs1 c2
+    else (s2, 0 : i2) : mergeWordCounts c1 cs2
 
