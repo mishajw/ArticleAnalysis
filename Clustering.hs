@@ -21,7 +21,7 @@ kmeans cmp avg n as =
 
   clusterTo :: (Eq a, Ord b, Num b) => [a] -> [a] -> (a -> a -> b) -> [[a]]
   clusterTo as cs cmp =
-    map (\(p, c) -> c) (clusterTo' as cs cmp) where
+    map snd (clusterTo' as cs cmp) where
 
     clusterTo' :: (Eq a, Ord b, Num b) => [a] -> [a] -> (a -> a -> b) -> [(a, [a])]
     clusterTo' [] cs cmp = map (\c -> (c, [])) cs
