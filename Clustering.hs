@@ -1,4 +1,4 @@
-module Clustering where
+module Clustering (kmeans) where
 
 import Data.List
 
