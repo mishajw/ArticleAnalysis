@@ -3,6 +3,7 @@ module WordCountClustering where
 import qualified Clustering
 
 import Data.List
+import Data.Char (toLower, isAlphaNum, isSpace)
 
 -- |Run the clustering on a list of text
 runOnText :: [String] -> [[[(String, Int)]]]
@@ -51,5 +52,8 @@ mergeWordCounts c1@((s1, i1) : cs1) c2@((s2, i2) : cs2) =
 
 -- |Get a word count of a string
 wordCount :: String -> [(String, Int)]
-wordCount = map (\xs -> (head xs, length xs)) . group . sort . words
+wordCount =
+  map (\xs -> (head xs, length xs)) .
+  group . sort . words .
+  map toLower . filter (\c -> (isAlphaNum c) || (isSpace c))
 
