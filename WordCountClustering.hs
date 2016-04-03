@@ -1,7 +1,6 @@
 module WordCountClustering where
 
 import qualified Clustering
-import WordCount (wordCount)
 
 import Data.List
 
@@ -49,4 +48,8 @@ mergeWordCounts c1@((s1, i1) : cs1) c2@((s2, i2) : cs2) =
     if s1 < s2
     then (s1, 0 : i1) : mergeWordCounts cs1 c2
     else (s2, 0 : i2) : mergeWordCounts c1 cs2
+
+-- |Get a word count of a string
+wordCount :: String -> [(String, Int)]
+wordCount = map (\xs -> (head xs, length xs)) . group . sort . words
 
