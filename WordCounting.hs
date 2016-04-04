@@ -1,5 +1,5 @@
-module WordCountClustering
-( runOnText
+module WordCounting
+( clusterTexts
 , cmpWordCount
 , avgWordCount
 , wordCount) where
@@ -10,8 +10,8 @@ import Data.List
 import Data.Char (toLower, isAlphaNum, isSpace)
 
 -- |Run the clustering on a list of text
-runOnText :: [String] -> [[[(String, Int)]]]
-runOnText ss =
+clusterTexts :: [String] -> [[[(String, Int)]]]
+clusterTexts ss =
   let wcs = map wordCount ss in
   Clustering.kmeans cmpWordCount avgWordCount 2 wcs
 
