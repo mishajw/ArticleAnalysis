@@ -1,7 +1,8 @@
 module WordCountClustering
 ( runOnText
 , cmpWordCount
-, avgWordCount) where
+, avgWordCount
+, wordCount) where
 
 import qualified Clustering
 
