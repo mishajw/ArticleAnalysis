@@ -11,7 +11,7 @@ main = do
 
   let labeledContent = zip files contents
   let uts = map (\(f, s) -> UncountedText { utTitle=f, utText=s }) labeledContent
-  let clusters = clusterTexts uts
+  let clusters = clusterTexts 2 uts
   
   print $ map (map wcTitle) clusters
 

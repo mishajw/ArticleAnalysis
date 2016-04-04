@@ -10,10 +10,10 @@ import qualified Clustering
 import qualified Data.List as L
 
 -- |Run the clustering on a list of text
-clusterTexts :: [UncountedText] -> [[WordCount]]
-clusterTexts ss =
+clusterTexts :: Int -> [UncountedText] -> [[WordCount]]
+clusterTexts i ss =
   let wcs = map mkWordCount ss in
-  Clustering.kmeans cmpWordCount avgWordCount 2 wcs
+  Clustering.kmeans cmpWordCount avgWordCount i wcs
 
 -- |Compare two word counts
 cmpWordCount :: WordCount -> WordCount -> Int
