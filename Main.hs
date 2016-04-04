@@ -14,5 +14,5 @@ main = do
   let clusters = clusterTexts uts
 
   print clusters
-  print $ map (map title) clusters
+  print $ map (map wcTitle) clusters
 

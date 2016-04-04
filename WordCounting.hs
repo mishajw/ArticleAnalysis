@@ -32,18 +32,18 @@ cmpWordCount c1 c2 =
     -- |Sort a word count alphabetically
     sortWordCount :: WordCount -> WordCount
     sortWordCount wc = wc {
-      counts = L.sortBy (\(s, _) (s', _) -> compare s s') (counts wc)
+      wcCounts = L.sortBy (\(s, _) (s', _) -> compare s s') (wcCounts wc)
     }
 
 -- |Get the average for a list of word counts
 avgWordCount :: [WordCount] -> WordCount
-avgWordCount [] = WordCount { title="", counts=[] }
+avgWordCount [] = WordCount { wcTitle="", wcCounts=[] }
 avgWordCount wcs =
   let wccs = map wordCountToCollection wcs in
   let WordCountCollection merged = foldl1 mergeWordCounts wccs in
   WordCount {
-    title = ""
-  , counts = map (\(s, is) -> (s, (sum is) `div` (length is))) merged
+    wcTitle = ""
+  , wcCounts = map (\(s, is) -> (s, (sum is) `div` (length is))) merged
   }
 
 mergeWordCounts :: WordCountCollection -> WordCountCollection -> WordCountCollection

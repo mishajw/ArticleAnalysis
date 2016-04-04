@@ -15,22 +15,22 @@ data UncountedText = UncountedText {
 } deriving (Show)
 
 data WordCount = WordCount {
-  title :: String
-, counts :: [(String, Int)]
+  wcTitle :: String
+, wcCounts :: [(String, Int)]
 } deriving (Show, Eq)
 
 data WordCountCollection = WordCountCollection [(String, [Int])] deriving (Show)
 
 wordCountToCollection :: WordCount -> WordCountCollection
 wordCountToCollection wc =
-  WordCountCollection $ map (\(s, i) -> (s, [i])) (counts wc)
+  WordCountCollection $ map (\(s, i) -> (s, [i])) (wcCounts wc)
 
 -- |Get a word count of a string
 mkWordCount :: UncountedText -> WordCount
 mkWordCount ut =
   WordCount {
-    title = utTitle ut
-  , counts = (
+    wcTitle = utTitle ut
+  , wcCounts = (
       map (\xs -> (head xs, length xs)) .
       group . sort . words .
       map toLower . filter (\c -> (isAlphaNum c) || (isSpace c))
