@@ -15,12 +15,14 @@ main = do
 
 run :: String -> Int -> IO ()
 run dir amount = do
+  putStrLn $ "Putting files from " ++ dir ++ " into " ++ show amount ++ " clusters"
+
   files <- getFileNames dir
   uts <- mapM getUncountedText files
 
-  let clusters = clusterTexts 2 uts
+  let clusters = clusterTexts amount uts
   
-  print $ map (map wcTitle) clusters
+  mapM_ (print . map wcTitle) clusters
 
 getFileNames :: FilePath -> IO [FilePath]
 getFileNames dir = do 
