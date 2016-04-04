@@ -7,8 +7,6 @@ import System.Directory (getDirectoryContents)
 import WordCounting (clusterTexts)
 import WordCountTypes (UncountedText(..), WordCount(..))
 
--- files = map (\i -> "test" ++ show i ++ ".txt") [1..4]
-
 main = do
   args <- getArgs
   case args of
