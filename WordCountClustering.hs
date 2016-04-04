@@ -36,6 +36,7 @@ cmpWordCount c1 c2 =
 
 -- |Get the average for a list of word counts
 avgWordCount :: [[(String, Int)]] -> [(String, Int)]
+avgWordCount [] = []
 avgWordCount wcs =
   let wcs' = map (map (\(s, i) -> (s, [i]))) wcs in
   let merged = foldl1 mergeWordCounts wcs' in
