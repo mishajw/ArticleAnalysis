@@ -18,8 +18,8 @@ clusterTexts ss =
 -- |Compare two word counts
 cmpWordCount :: [(String, Int)] -> [(String, Int)] -> Int
 cmpWordCount c1 c2 =
-  let c1' = map (\(s, i) -> (s, [i])) (sortWordCount c1) in
-  let c2' = map (\(s, i) -> (s, [i])) (sortWordCount c2) in
+  let prepare wc = map (\(s, i) -> (s, [i])) $ sortWordCount wc in
+  let (c1', c2') = (prepare c1, prepare c2) in
   let merged = mergeWordCounts c1' c2' in
   diff merged where
 
