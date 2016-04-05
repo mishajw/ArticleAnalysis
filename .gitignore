@@ -14,4 +14,7 @@ cabal.sandbox.config
 *.aux
 *.hp
 .stack-work/
-res/
+res/emmas
+res/joes
+res/alis
+res/txts
