@@ -2,7 +2,7 @@ module Clustering (kmeans) where
 
 import Data.List
 
-defaultIterations = 100
+defaultIterations = 10
 
 -- |K-means clustering.
 -- |Takes Comparator, Averager, amount of clusters, and the list to cluster.
