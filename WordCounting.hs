@@ -9,13 +9,13 @@ import qualified Clustering
 
 import qualified Data.List as L
 
--- |Run the clustering on a list of text
+-- | Run the clustering on a list of text
 clusterTexts :: Int -> [UncountedText] -> [[WordCount]]
 clusterTexts i ss =
   let wcs = map mkWordCount ss in
   Clustering.kmeans cmpWordCount avgWordCount i wcs
 
--- |Compare two word counts
+-- | Compare two word counts
 cmpWordCount :: WordCount -> WordCount -> Int
 cmpWordCount c1 c2 =
   let prepare = wordCountToCollection . sortWordCount in
@@ -23,19 +23,19 @@ cmpWordCount c1 c2 =
   let merged = mergeWordCounts c1' c2' in
   diff merged where
 
-    -- |Get the difference between a word count collection
+    -- | Get the difference between a word count collection
     diff :: WordCountCollection -> Int
     diff (WordCountCollection wcc) =
       let cs = map snd wcc in
       sum $ map (\is -> (maximum is) - (minimum is)) cs
 
-    -- |Sort a word count alphabetically
+    -- | Sort a word count alphabetically
     sortWordCount :: WordCount -> WordCount
     sortWordCount wc = wc {
       wcCounts = L.sortBy (\(s, _) (s', _) -> compare s s') (wcCounts wc)
     }
 
--- |Get the average for a list of word counts
+-- | Get the average for a list of word counts
 avgWordCount :: [WordCount] -> WordCount
 avgWordCount [] = WordCount { wcTitle="", wcCounts=[] }
 avgWordCount wcs =
@@ -50,7 +50,7 @@ mergeWordCounts :: WordCountCollection -> WordCountCollection -> WordCountCollec
 mergeWordCounts (WordCountCollection wc1) (WordCountCollection wc2) =
   WordCountCollection $ mergeCounts wc1 wc2
 
--- |Merge two word counts, must be sorted alphabetically
+-- | Merge two word counts, must be sorted alphabetically
 mergeCounts ::  [(String, [Int])] -> [(String, [Int])] -> [(String, [Int])]
 mergeCounts [] [] = []
 mergeCounts cs@(_:_) [] = map (\(s, is) -> (s, 0 : is)) cs
