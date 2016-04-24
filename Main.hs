@@ -27,7 +27,7 @@ run dir amount = do
 getFileNames :: FilePath -> IO [FilePath]
 getFileNames dir = do 
   files <- getDirectoryContents dir 
-  return $ (map (dir ++) . filter (\(c:_) -> c /= '.')) files
+  return $ (map (dir ++) . filter ((/= '.') . head)) files
 
 getUncountedText :: FilePath -> IO UncountedText
 getUncountedText path = do
