@@ -3,6 +3,7 @@ module Main where
 import System.IO
 import System.Environment (getArgs)
 import System.Directory (getDirectoryContents)
+import System.FilePath ((</>))
 
 import WordCounting (clusterTexts)
 import WordCountTypes (UncountedText(..), WordCount(..))
