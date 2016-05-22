@@ -24,8 +24,13 @@ library
                      , url
                      , HTTP
                      , transformers
+                     , parallel-io
                      , mtl
                      , network-uri
+                     , xml-conduit
+                     , html-conduit
+                     , http-conduit
+                     , text
   other-modules:       WordCounting
                      , WordCountTypes
                      , Clustering
