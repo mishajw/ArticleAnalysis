@@ -1,14 +1,15 @@
+module Fetcher (openUrl) where
+
 import qualified Data.ByteString.Char8 as B
 import Data.Tree.NTree.TypeDefs
 import Data.Maybe
 import Text.XML.HXT.Core
 import Control.Monad
-import Control.Monad.Trans
-import Control.Monad.Maybe
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Maybe
 import Network.HTTP
 import Network.URI
 import System.Environment
-import Control.Concurrent.ParallelIO
 
 openUrl :: String -> MaybeT IO String
 openUrl url = case parseURI url of
@@ -19,7 +20,7 @@ css :: ArrowXml a => String -> a XmlTree XmlTree
 css tag = multi (hasName tag)
 
 get :: String -> IO (IOSArrow XmlTree (NTree XNode))
-  get url = do
+get url = do
   contents <- runMaybeT $ openUrl url
   return $ readString [withParseHTML yes, withWarnings no] (fromMaybe "" contents)
 
