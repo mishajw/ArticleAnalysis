@@ -1,4 +1,4 @@
-module Main where
+module Run (run) where
 
 import System.IO
 import System.Environment (getArgs)
@@ -7,12 +7,6 @@ import System.FilePath ((</>))
 
 import WordCounting (clusterTexts)
 import WordCountTypes (UncountedText(..), WordCount(..))
-
-main = do
-  args <- getArgs
-  case args of
-    dir : amount : [] -> run dir (read amount)
-    _ -> putStrLn "Incorrect use, need <directory> <amount of groups>"
 
 run :: String -> Int -> IO ()
 run dir amount = do
@@ -44,4 +38,3 @@ getUncountedText path = do
   -- hClose handle
 
   return ut
-
