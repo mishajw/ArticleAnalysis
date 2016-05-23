@@ -1,0 +1,3 @@
+http://feeds.bbci.co.uk/news/rss.xml
+http://www.theguardian.com/uk/rss
+http://www.independent.co.uk/news/uk/rss
