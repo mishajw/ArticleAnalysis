@@ -14,11 +14,13 @@ import Fetcher.Article
 run :: IO ()
 run = do
   rssLinks <- getRssLinks
-  links <- runOnUrls fetchRssLinks rssLinks 
-  mapM_ (print . length) links
+  links <- fmap (concat . map (take 3)) $ runOnUrls fetchRssLinks rssLinks 
+  articles <- runOnUrls fetchArticle (take 10 $ links)
 
-  articles <- runOnUrls fetchArticle (take 3 . concat $ links)
-  mapM_ putStrLn articles
+  let uts = map (\(l, a) -> UncountedText l a) (zip links articles)
+  let clusters = clusterTexts 6 uts
+
+  mapM_ (print . map wcTitle) clusters
 
   putStrLn "Done"
 
