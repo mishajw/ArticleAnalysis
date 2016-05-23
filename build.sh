@@ -1,6 +1,28 @@
 #!/bin/bash
 
-if $(stack build); then
-  stack exec ArticleAnalysis-exe res/txts/ 3
+action=$1
+
+if [ -z $1 ]; then
+  action="all"
 fi
 
+do_build() {
+  stack build
+}
+
+do_run() {
+  stack exec ArticleAnalysis-exe res/txts/ 3
+}
+
+case $action in
+  "build")
+    do_build ;;
+  "run")
+    do_run ;;
+  "all")
+    if do_build; then
+      do_run
+    fi ;;
+  *)
+    echo "Usage: $0 [build | run | all]" ;;
+esac
