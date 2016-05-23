@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module RssFetcher (fetchRssLinks) where
+module Fetcher.Rss (fetchRssLinks) where
 
 import System.IO (putStrLn)
 import Data.Char (isSpace)
-import Network.HTTP.Conduit (simpleHttp)
 import Data.Text (unpack)
-import Text.HTML.DOM (parseLBS)
-import Text.XML.Cursor (Cursor, content, child, element, fromDocument, (>=>), ($//))
+import Text.XML.Cursor (Cursor, content, child, element, (>=>), ($//))
+
+import Fetcher (getCursor)
 
 -- | Get the elements from a cursor
 findElements :: Cursor -> [Cursor]
@@ -19,12 +19,6 @@ findLinks c =
   filter (not . null) .
   map ((filter $ not.isSpace) . unpack) $
     foldMap content c
-
--- | Get the cursor a URL
-getCursor :: String -> IO Cursor
-getCursor u = do
-  page <- simpleHttp u
-  return $ fromDocument $ parseLBS page
 
 -- | Fetch the links found in a RSS URL
 fetchRssLinks :: String -> IO [String]

@@ -34,6 +34,8 @@ library
   other-modules:       WordCounting
                      , WordCountTypes
                      , Clustering
+                     , Fetcher
+                     , Fetcher.Rss
   default-language:    Haskell2010
 
 executable ArticleAnalysis-exe
