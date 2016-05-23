@@ -2,14 +2,12 @@
 
 module RssFetcher (fetchRssLinks) where
 
-import System.IO
+import System.IO (putStrLn)
 import Data.Char (isSpace)
 import Network.HTTP.Conduit (simpleHttp)
-import Prelude hiding (concat, putStrLn)
 import Data.Text (unpack)
-import Data.Text.Internal (showText)
 import Text.HTML.DOM (parseLBS)
-import Text.XML.Cursor (Cursor, content, followingSibling, attribute, child, element, fromDocument, (>=>), ($//), (&//), (&/), (&|))
+import Text.XML.Cursor (Cursor, content, followingSibling, attribute, child, element, fromDocument, (>=>), ($//))
 
 -- | Get the elements from a cursor
 findElements :: Cursor -> [Cursor]
