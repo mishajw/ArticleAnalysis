@@ -1,31 +1,38 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module RssFetcher (fetchRssLinks) where
+
+import System.IO
+import Data.Char (isSpace)
 import Network.HTTP.Conduit (simpleHttp)
 import Prelude hiding (concat, putStrLn)
-import Data.Text (concat)
-import Data.Text.IO (putStrLn){-/hi-}
+import Data.Text (unpack)
+import Data.Text.Internal (showText)
 import Text.HTML.DOM (parseLBS)
-import Text.XML.Cursor (Cursor, content, attribute, child, element, fromDocument, (>=>), ($//), (&//), (&/), (&|))
+import Text.XML.Cursor (Cursor, content, followingSibling, attribute, child, element, fromDocument, (>=>), ($//), (&//), (&/), (&|))
 
--- The URL we're going to search
-url = "http://feeds.bbci.co.uk/news/rss.xml"
+-- | Get the elements from a cursor
+findElements :: Cursor -> [Cursor]
+findElements = element "item" >=> child
 
--- The data we're going to search for
-findNodes :: Cursor -> [Cursor]
-findNodes = element "item" &/ element "title" >=> child
+-- | The data we're going to search for
+findLinks :: [Cursor] -> [String]
+findLinks c =
+  filter (not . null) .
+  map ((filter $ not.isSpace) . unpack) $
+    foldMap content c
 
--- Extract the data from each node in turn
-extractData = concat . content
+-- | Get the cursor a URL
+getCursor :: String -> IO Cursor
+getCursor u = do
+  page <- simpleHttp u
+  return $ fromDocument $ parseLBS page
 
--- Process the list of data elements
-processData = mapM_ putStrLn
-
-cursorFor :: String -> IO Cursor
-cursorFor u = do
-     page <- simpleHttp u
-     return $ fromDocument $ parseLBS page
-
-main = do
-     cursor <- cursorFor url 
-     processData $ cursor $// findNodes &| extractData
+-- | Fetch the links found in a RSS URL
+fetchRssLinks :: String -> IO [String]
+fetchRssLinks url = do
+  cursor <- getCursor url
+  let elems = cursor $// findElements
+  let links = findLinks elems
+  return links
 
