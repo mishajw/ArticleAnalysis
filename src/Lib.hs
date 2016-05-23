@@ -7,35 +7,18 @@ import System.FilePath ((</>))
 
 import WordCounting (clusterTexts)
 import WordCountTypes (UncountedText(..), WordCount(..))
+import Fetcher
+import Fetcher.Rss
+import Fetcher.Article
 
-run :: String -> Int -> IO ()
-run dir amount = do
-  putStrLn $ "Putting files from " ++ dir ++ " into " ++ show amount ++ " clusters"
+run :: IO ()
+run = do
+  rssLinks <- getRssLinks
+  links <- runOnUrls fetchRssLinks rssLinks 
+  mapM_ (print . length) links
 
-  files <- getFileNames dir
-  uts <- mapM getUncountedText files
+  articles <- runOnUrls fetchArticle (take 3 . concat $ links)
+  mapM_ putStrLn articles
 
-  let clusters = clusterTexts amount uts
-  
-  mapM_ (print . map wcTitle) clusters
-
-getFileNames :: FilePath -> IO [FilePath]
-getFileNames dir = do 
-  files <- getDirectoryContents dir 
-  return $ (map (dir ++) . filter ((/= '.') . head)) files
-
-getUncountedText :: FilePath -> IO UncountedText
-getUncountedText path = do
-  handle <- openFile path ReadMode
-  hSetEncoding handle char8
-  contents <- hGetContents handle
-
-  let ut = UncountedText {
-    utTitle = path
-  , utText = contents
-  }
-
-  -- hClose handle
-
-  return ut
+  putStrLn "Done"
 
