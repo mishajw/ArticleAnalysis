@@ -25,7 +25,7 @@ run = do
   articles <- runOnUrls fetchArticle (take 10 $ links)
 
   let uts = map (\(l, a) -> UncountedText l a) (zip links articles)
-  let clusters = clusterTexts 6 uts
+  let clusters = clusterTexts kmeans 6 uts
 
   mapM_ (print . map wcTitle) clusters
 

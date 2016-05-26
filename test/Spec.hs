@@ -17,12 +17,12 @@ main = hspec $ do
       orderCluster (kmeans 2 ([3, 2, 1, 7, 8, 9] :: [Int])) `shouldBe` [[1, 2, 3], [7, 8, 9]]
   describe "Cluster.Words" $
     it "can cluster words" $ do
-      let clusters = clusterTexts 2 [ UncountedText "a1" "a aa aaa a"
-                                    , UncountedText "a2" "aa a a, aa, aa"
-                                    , UncountedText "a3" "a, a, aa,b, a,aa"
-                                    , UncountedText "b1" "bbb b b bb, bb"
-                                    , UncountedText "b2" "bb,b, a, bbb, b"
-                                    , UncountedText "b3" "b, bb, bbb, bb, b b" ]
+      let clusters = clusterTexts kmeans 2 [ UncountedText "a1" "a aa aaa a"
+                                           , UncountedText "a2" "aa a a, aa, aa"
+                                           , UncountedText "a3" "a, a, aa,b, a,aa"
+                                           , UncountedText "b1" "bbb b b bb, bb"
+                                           , UncountedText "b2" "bb,b, a, bbb, b"
+                                           , UncountedText "b3" "b, bb, bbb, bb, b b" ]
 
       all allEqual $ map (map $ head . wcTitle) clusters
 
