@@ -1,8 +1,4 @@
-module Cluster.Words
-( clusterTexts
-, cmpWordCount
-, avgWordCount
-) where
+module Cluster.Words (clusterTexts) where
 
 import Cluster.WordTypes
 import qualified Cluster.Kmeans
@@ -13,38 +9,35 @@ import qualified Data.List as L
 clusterTexts :: Int -> [UncountedText] -> [[WordCount]]
 clusterTexts i ss =
   let wcs = map mkWordCount ss in
-  Cluster.Kmeans.kmeans cmpWordCount avgWordCount i wcs
+  Cluster.Kmeans.kmeans i wcs
 
--- | Compare two word counts
-cmpWordCount :: WordCount -> WordCount -> Int
-cmpWordCount c1 c2 =
-  let prepare = wordCountToCollection . sortWordCount in
-  let (c1', c2') = (prepare c1, prepare c2) in
-  let merged = mergeWordCounts c1' c2' in
-  diff merged where
+instance Cluster.Kmeans.Clusterable WordCount where
+  cmp c1 c2 =
+    let prepare = wordCountToCollection . sortWordCount in
+    let (c1', c2') = (prepare c1, prepare c2) in
+    let merged = mergeWordCounts c1' c2' in
+    fromInteger . toInteger $ diff merged where
 
-    -- | Get the difference between a word count collection
-    diff :: WordCountCollection -> Int
-    diff (WordCountCollection wcc) =
-      let cs = map snd wcc in
-      sum $ map (\is -> (maximum is) - (minimum is)) cs
+      -- | Get the difference between a word count collection
+      diff :: WordCountCollection -> Int
+      diff (WordCountCollection wcc) =
+        let cs = map snd wcc in
+        sum $ map (\is -> (maximum is) - (minimum is)) cs
 
-    -- | Sort a word count alphabetically
-    sortWordCount :: WordCount -> WordCount
-    sortWordCount wc = wc {
-      wcCounts = L.sortBy (\(s, _) (s', _) -> compare s s') (wcCounts wc)
+      -- | Sort a word count alphabetically
+      sortWordCount :: WordCount -> WordCount
+      sortWordCount wc = wc {
+        wcCounts = L.sortBy (\(s, _) (s', _) -> compare s s') (wcCounts wc)
+      }
+
+  avg [] = WordCount { wcTitle="", wcCounts=[] }
+  avg wcs =
+    let wccs = map wordCountToCollection wcs in
+    let WordCountCollection merged = foldl1 mergeWordCounts wccs in
+    WordCount {
+      wcTitle = ""
+    , wcCounts = map (\(s, is) -> (s, (sum is) `div` (length is))) merged
     }
-
--- | Get the average for a list of word counts
-avgWordCount :: [WordCount] -> WordCount
-avgWordCount [] = WordCount { wcTitle="", wcCounts=[] }
-avgWordCount wcs =
-  let wccs = map wordCountToCollection wcs in
-  let WordCountCollection merged = foldl1 mergeWordCounts wccs in
-  WordCount {
-    wcTitle = ""
-  , wcCounts = map (\(s, is) -> (s, (sum is) `div` (length is))) merged
-  }
 
 mergeWordCounts :: WordCountCollection -> WordCountCollection -> WordCountCollection
 mergeWordCounts (WordCountCollection wc1) (WordCountCollection wc2) =

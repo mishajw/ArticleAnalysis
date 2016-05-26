@@ -7,11 +7,14 @@ import System.IO
 
 import Lib
 
+instance Clusterable Int where
+  cmp a b = fromIntegral . toInteger $ abs (a - b)
+  avg is = sum is `div` length is
+
 main = hspec $ do
   describe "Cluster.Kmeans" $
     it "can cluster basic integers correctly" $
-      orderCluster (clusterInts 2 [3, 2, 1, 7, 8, 9]) `shouldBe` [[1, 2, 3], [7, 8, 9]]
-
+      orderCluster (kmeans 2 ([3, 2, 1, 7, 8, 9] :: [Int])) `shouldBe` [[1, 2, 3], [7, 8, 9]]
   describe "Cluster.Words" $
     it "can cluster words" $ do
       let clusters = clusterTexts 2 [ UncountedText "a1" "a aa aaa a"
@@ -23,17 +26,8 @@ main = hspec $ do
 
       all allEqual $ map (map $ head . wcTitle) clusters
 
-clusterInts :: Int -> [Int] -> [[Int]]
-clusterInts = kmeans cmpInt avgInt
-
 orderCluster :: (Num a, Ord a) => [[a]] -> [[a]]
 orderCluster is = sortWith sum $ map sort is
-
-cmpInt :: Int -> Int -> Int
-cmpInt a b = abs (a - b)
-
-avgInt :: [Int] -> Int
-avgInt is = sum is `div` length is
 
 allEqual :: Eq a => [a] -> Bool
 allEqual (h : t) = all (== h) t
