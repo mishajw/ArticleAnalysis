@@ -10,6 +10,10 @@ do_build() {
   stack build
 }
 
+do_test() {
+  stack test
+}
+
 do_run() {
   stack exec ArticleAnalysis-exe res/txts/ 3
 }
@@ -19,10 +23,13 @@ case $action in
     do_build ;;
   "run")
     do_run ;;
+  "test")
+    do_build && do_test ;;
   "all")
     if do_build; then
       do_run
+      do_test
     fi ;;
   *)
-    echo "Usage: $0 [build | run | all]" ;;
+    echo "Usage: $0 [build | run | test | all]" ;;
 esac
