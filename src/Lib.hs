@@ -1,8 +1,8 @@
 module Lib (
   run
-, module Clustering
-, module WordCounting
-, module WordCountTypes
+, module Cluster.Kmeans
+, module Cluster.Words
+, module Cluster.WordTypes
 , module Fetcher
 , module Fetcher.Rss
 , module Fetcher.Article
@@ -13,9 +13,9 @@ import System.Environment (getArgs)
 import System.Directory (getDirectoryContents)
 import System.FilePath ((</>))
 
-import Clustering
-import WordCounting (clusterTexts)
-import WordCountTypes (UncountedText(..), WordCount(..))
+import Cluster.Kmeans
+import Cluster.Words (clusterTexts)
+import Cluster.WordTypes (UncountedText(..), WordCount(..))
 import Fetcher
 import Fetcher.Rss
 import Fetcher.Article

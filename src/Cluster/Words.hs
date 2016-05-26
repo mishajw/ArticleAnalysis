@@ -1,11 +1,11 @@
-module WordCounting
+module Cluster.Words
 ( clusterTexts
 , cmpWordCount
 , avgWordCount
 ) where
 
-import WordCountTypes
-import qualified Clustering
+import Cluster.WordTypes
+import qualified Cluster.Kmeans
 
 import qualified Data.List as L
 
@@ -13,7 +13,7 @@ import qualified Data.List as L
 clusterTexts :: Int -> [UncountedText] -> [[WordCount]]
 clusterTexts i ss =
   let wcs = map mkWordCount ss in
-  Clustering.kmeans cmpWordCount avgWordCount i wcs
+  Cluster.Kmeans.kmeans cmpWordCount avgWordCount i wcs
 
 -- | Compare two word counts
 cmpWordCount :: WordCount -> WordCount -> Int

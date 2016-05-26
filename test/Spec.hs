@@ -8,11 +8,11 @@ import System.IO
 import Lib
 
 main = hspec $ do
-  describe "Clustering" $
+  describe "Cluster.Kmeans" $
     it "can cluster basic integers correctly" $
       orderCluster (clusterInts 2 [3, 2, 1, 7, 8, 9]) `shouldBe` [[1, 2, 3], [7, 8, 9]]
 
-  describe "WordCounting" $
+  describe "Cluster.Words" $
     it "can cluster words" $ do
       let clusters = clusterTexts 2 [ UncountedText "a1" "a aa aaa a"
                                     , UncountedText "a2" "aa a a, aa, aa"

@@ -31,9 +31,9 @@ library
                      , html-conduit
                      , http-conduit
                      , text
-  other-modules:       WordCounting
-                     , WordCountTypes
-                     , Clustering
+  other-modules:       Cluster.Words
+                     , Cluster.WordTypes
+                     , Cluster.Kmeans
                      , Fetcher
                      , Fetcher.Rss
                      , Fetcher.Article

@@ -1,4 +1,4 @@
-module WordCountTypes (
+module Cluster.WordTypes (
   UncountedText(..)
 , WordCount(..)
 , WordCountCollection(..)
