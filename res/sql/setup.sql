@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS page (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+
+CREATE TABLE IF NOT EXISTS word (
+  id INTEGER PRIMARY KEY,
+  word TEXT
+);
+
+CREATE TABLE IF NOT EXISTS page_word (
+  id INTEGER PRIMARY KEY,
+  page_key INTEGER,
+  word_key INTEGER,
+
+  FOREIGN KEY (page_key) REFERENCES page(id),
+  FOREIGN KEY (word_key) REFERENCES word(id)
+);
+

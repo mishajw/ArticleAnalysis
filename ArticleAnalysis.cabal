@@ -31,11 +31,15 @@ library
                      , html-conduit
                      , http-conduit
                      , text
+                     , sqlite-simple
+                     , split
+                     , MissingH
   other-modules:       Cluster.Words
                      , Cluster.Kmeans
                      , Fetcher
                      , Fetcher.Rss
                      , Fetcher.Article
+                     , DB
   default-language:    Haskell2010
 
 executable ArticleAnalysis-exe
