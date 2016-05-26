@@ -2,6 +2,7 @@ module Cluster.Words (
   clusterTexts
 , UncountedText(..)
 , WordCount(..)
+, mkWordCount
 ) where
 
 import Cluster.Kmeans
