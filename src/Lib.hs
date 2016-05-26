@@ -1,10 +1,14 @@
-module Lib (run) where
+module Lib (
+  run
+, module Clustering
+) where
 
 import System.IO
 import System.Environment (getArgs)
 import System.Directory (getDirectoryContents)
 import System.FilePath ((</>))
 
+import Clustering
 import WordCounting (clusterTexts)
 import WordCountTypes (UncountedText(..), WordCount(..))
 import Fetcher
