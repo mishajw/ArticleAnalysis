@@ -1,17 +1,53 @@
-module Cluster.Words (clusterTexts) where
+module Cluster.Words (
+  clusterTexts
+, UncountedText(..)
+, WordCount(..)
+) where
 
-import Cluster.WordTypes
-import qualified Cluster.Kmeans
+import Cluster.Kmeans
 
 import qualified Data.List as L
+import Data.Char (toLower, isAlphaNum, isSpace)
 
 -- | Run the clustering on a list of text
 clusterTexts :: Int -> [UncountedText] -> [[WordCount]]
 clusterTexts i ss =
   let wcs = map mkWordCount ss in
-  Cluster.Kmeans.kmeans i wcs
+  kmeans i wcs
 
-instance Cluster.Kmeans.Clusterable WordCount where
+-- Uncounted text
+data UncountedText = UncountedText {
+  utTitle :: String
+, utText :: String
+} deriving (Show)
+
+-- | A word count for a piece of text
+data WordCount = WordCount {
+  wcTitle :: String
+, wcCounts :: [(String, Int)]
+} deriving (Show, Eq)
+
+-- | A collection of word counts
+data WordCountCollection = WordCountCollection [(String, [Int])] deriving (Show)
+
+-- | Convert from WordCount to WordCountCollection
+wordCountToCollection :: WordCount -> WordCountCollection
+wordCountToCollection wc =
+  WordCountCollection $ map (\(s, i) -> (s, [i])) (wcCounts wc)
+
+-- | Make a word count from a string
+mkWordCount :: UncountedText -> WordCount
+mkWordCount ut =
+  WordCount {
+    wcTitle = utTitle ut
+  , wcCounts = (
+      map (\xs -> (head xs, length xs)) .
+      L.group . L.sort . words .
+      map toLower . filter (\c -> (isAlphaNum c) || (isSpace c))
+    ) $ utText ut
+  }
+
+instance Clusterable WordCount where
   cmp c1 c2 =
     let prepare = wordCountToCollection . sortWordCount in
     let (c1', c2') = (prepare c1, prepare c2) in

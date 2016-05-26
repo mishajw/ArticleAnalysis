@@ -32,7 +32,6 @@ library
                      , http-conduit
                      , text
   other-modules:       Cluster.Words
-                     , Cluster.WordTypes
                      , Cluster.Kmeans
                      , Fetcher
                      , Fetcher.Rss

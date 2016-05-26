@@ -2,7 +2,6 @@ module Lib (
   run
 , module Cluster.Kmeans
 , module Cluster.Words
-, module Cluster.WordTypes
 , module Fetcher
 , module Fetcher.Rss
 , module Fetcher.Article
@@ -14,8 +13,7 @@ import System.Directory (getDirectoryContents)
 import System.FilePath ((</>))
 
 import Cluster.Kmeans
-import Cluster.Words (clusterTexts)
-import Cluster.WordTypes (UncountedText(..), WordCount(..))
+import Cluster.Words (clusterTexts, UncountedText(..), WordCount(..))
 import Fetcher
 import Fetcher.Rss
 import Fetcher.Article
