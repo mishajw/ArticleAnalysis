@@ -16,7 +16,7 @@ instance Cluster.Kmeans.Clusterable WordCount where
     let prepare = wordCountToCollection . sortWordCount in
     let (c1', c2') = (prepare c1, prepare c2) in
     let merged = mergeWordCounts c1' c2' in
-    fromInteger . toInteger $ diff merged where
+    fromIntegral $ diff merged where
 
       -- | Get the difference between a word count collection
       diff :: WordCountCollection -> Int

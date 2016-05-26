@@ -8,7 +8,7 @@ import System.IO
 import Lib
 
 instance Clusterable Int where
-  cmp a b = fromIntegral . toInteger $ abs (a - b)
+  cmp a b = fromIntegral $ abs (a - b)
   avg is = sum is `div` length is
 
 main = hspec $ do
