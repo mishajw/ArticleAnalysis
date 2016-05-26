@@ -9,9 +9,7 @@ import Lib
 main = hspec $ do
   describe "Clustering" $ do
     it "can cluster basic integers correctly" $ do
-      let normalised = orderIntCluster $ clusterInts 2 [3, 2, 1, 7, 8, 9]
-
-      normalised `shouldBe` [[1, 2, 3], [7, 8, 9]]
+      (orderIntCluster $ clusterInts 2 [3, 2, 1, 7, 8, 9]) `shouldBe` [[1, 2, 3], [7, 8, 9]]
 
 clusterInts :: Int -> [Int] -> [[Int]]
 clusterInts = kmeans cmpInt avgInt
