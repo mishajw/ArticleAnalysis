@@ -1,6 +1,11 @@
 module Lib (
   run
 , module Clustering
+, module WordCounting
+, module WordCountTypes
+, module Fetcher
+, module Fetcher.Rss
+, module Fetcher.Article
 ) where
 
 import System.IO
