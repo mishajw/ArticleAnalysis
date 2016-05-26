@@ -9,13 +9,13 @@ import Lib
 main = hspec $ do
   describe "Clustering" $ do
     it "can cluster basic integers correctly" $ do
-      (orderIntCluster $ clusterInts 2 [3, 2, 1, 7, 8, 9]) `shouldBe` [[1, 2, 3], [7, 8, 9]]
+      (orderCluster $ clusterInts 2 [3, 2, 1, 7, 8, 9]) `shouldBe` [[1, 2, 3], [7, 8, 9]]
 
 clusterInts :: Int -> [Int] -> [[Int]]
 clusterInts = kmeans cmpInt avgInt
 
-orderIntCluster :: [[Int]] -> [[Int]]
-orderIntCluster is = sortWith sum $ map sort is
+orderCluster :: (Num a, Ord a) => [[a]] -> [[a]]
+orderCluster is = sortWith sum $ map sort is
 
 cmpInt :: Int -> Int -> Int
 cmpInt a b = abs (a - b)
