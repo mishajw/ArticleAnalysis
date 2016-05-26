@@ -24,7 +24,7 @@ case $action in
   "run")
     do_run ;;
   "test")
-    do_build && do_test ;;
+    do_test ;;
   "all")
     if do_build; then
       do_run
