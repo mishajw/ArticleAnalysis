@@ -22,7 +22,7 @@ case $action in
   "build")
     do_build ;;
   "run")
-    do_run ;;
+    do_build && do_run ;;
   "test")
     do_test ;;
   "all")
