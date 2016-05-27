@@ -3,6 +3,7 @@ module DB (
   setup
 , insertWordCount
 , getWordCount
+, getAllWordCounts
 ) where
 
 import Data.String.Utils (strip)
@@ -69,6 +70,13 @@ getWordCount title = do
     \    pw.word_id = w.id" (Only title)
 
   return $ WordCount title $ map (\(WordCountRow w c) -> (w, c)) results
+
+-- | Get all word counts in the database
+getAllWordCounts :: IO [WordCount]
+getAllWordCounts = do
+  conn <- defaultConnection
+  results <- query_ conn "SELECT name FROM page"
+  mapM (\(Only n) -> getWordCount n) results
 
 data PageWordRow = PageWordRow Int Int Int deriving Show
 instance FromRow PageWordRow where
