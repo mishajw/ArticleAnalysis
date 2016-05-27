@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS page_word (
   id INTEGER PRIMARY KEY,
   page_id INTEGER,
   word_id INTEGER,
+  count INTEGER,
 
   FOREIGN KEY (page_id) REFERENCES page(id),
   FOREIGN KEY (word_id) REFERENCES word(id)
