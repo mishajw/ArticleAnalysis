@@ -4,7 +4,7 @@ module DB where
 import Data.String.Utils (strip)
 import Data.List.Split (splitOn)
 import qualified Data.Text as DT (pack)
-import Data.Int (Int64)
+import Data.Int (Int)
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
 
@@ -29,14 +29,21 @@ insertWordCount :: WordCount -> IO ()
 insertWordCount (WordCount t cs) = do
   conn <- defaultConnection
   execute conn "INSERT INTO page (name) VALUES (?)" $ Only t
-  pageId <- lastInsertRowId conn
+  pageId <- fmap fromIntegral $ lastInsertRowId conn
 
   mapM_ (\(w, c) -> do
-    print w
-    print c
-    execute conn "INSERT INTO word (word) VALUES (?)" (Only w)
-    wordId <- lastInsertRowId conn
+    wordId <- insertWord conn w
     execute conn "INSERT INTO page_word (page_id, word_id, count) VALUES (?, ?, ?)" (PageWordRow pageId wordId c)) cs
+
+insertWord :: Connection -> String -> IO Int
+insertWord conn w = do
+  results <- query conn "SELECT id FROM word WHERE word = ?" (Only w)
+
+  case results of
+    [] -> do
+      execute conn "INSERT INTO word (word) VALUES (?)" (Only w)
+      fmap fromIntegral $ lastInsertRowId conn
+    (Only id) : _ -> return id
 
 getWordCount :: String -> IO WordCount
 getWordCount title = do
@@ -44,18 +51,20 @@ getWordCount title = do
   results <- query conn " \
     \  SELECT w.word, pw.count \
     \  FROM \
-    \    page p, \
     \    word w, \
-    \    page_word pw \
+    \    page_word pw, \
+    \    ( SELECT id FROM page \
+    \      WHERE name = ? \
+    \      LIMIT 1 \
+    \    ) AS p \
     \  WHERE \
     \    pw.page_id = p.id AND \
-    \    pw.word_id = w.id AND \
-    \    p.name = ?" (Only title)
+    \    pw.word_id = w.id" (Only title)
 
   return $ WordCount title $ map (\(WordCountRow w c) -> (w, c)) results
 
 
-data PageWordRow = PageWordRow Int64 Int64 Int deriving Show
+data PageWordRow = PageWordRow Int Int Int deriving Show
 instance FromRow PageWordRow where
   fromRow = PageWordRow <$> field <*> field <*> field
 instance ToRow PageWordRow where
@@ -66,4 +75,9 @@ instance FromRow WordCountRow where
   fromRow = WordCountRow <$> field <*> field
 instance ToRow WordCountRow where
   toRow (WordCountRow pid wid) = toRow (pid, wid)
+
+-- instance FromRow Int where
+--   fromRow = Int <$> field
+-- instance ToRow Int where
+--   toRow i = i
 
