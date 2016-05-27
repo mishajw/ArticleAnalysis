@@ -36,13 +36,34 @@ insertWordCount (WordCount t cs) = do
     print c
     execute conn "INSERT INTO word (word) VALUES (?)" (Only w)
     wordId <- lastInsertRowId conn
-    execute conn "INSERT INTO page_word (page_id, word_id) VALUES (?, ?)" (PageWordRow pageId wordId)) cs
+    execute conn "INSERT INTO page_word (page_id, word_id, count) VALUES (?, ?, ?)" (PageWordRow pageId wordId c)) cs
 
-data PageWordRow = PageWordRow Int64 Int64 deriving Show
+getWordCount :: String -> IO WordCount
+getWordCount title = do
+  conn <- defaultConnection
+  results <- query conn " \
+    \  SELECT w.word, pw.count \
+    \  FROM \
+    \    page p, \
+    \    word w, \
+    \    page_word pw \
+    \  WHERE \
+    \    pw.page_id = p.id AND \
+    \    pw.word_id = w.id AND \
+    \    p.name = ?" (Only title)
 
+  return $ WordCount title $ map (\(WordCountRow w c) -> (w, c)) results
+
+
+data PageWordRow = PageWordRow Int64 Int64 Int deriving Show
 instance FromRow PageWordRow where
-  fromRow = PageWordRow <$> field <*> field
-
+  fromRow = PageWordRow <$> field <*> field <*> field
 instance ToRow PageWordRow where
-  toRow (PageWordRow pid wid) = toRow (pid, wid)
+  toRow (PageWordRow pid wid count) = toRow (pid, wid, count)
+
+data WordCountRow = WordCountRow String Int deriving Show
+instance FromRow WordCountRow where
+  fromRow = WordCountRow <$> field <*> field
+instance ToRow WordCountRow where
+  toRow (WordCountRow pid wid) = toRow (pid, wid)
 
