@@ -35,7 +35,7 @@ insertWordCount :: WordCount -> IO ()
 insertWordCount (WordCount t cs) = do
   conn <- defaultConnection
   execute conn "INSERT INTO page (name) VALUES (?)" $ Only t
-  pageId <- fmap fromIntegral $ lastInsertRowId conn
+  pageId <- fromIntegral <$> lastInsertRowId conn
 
   mapM_ (\(w, c) -> do
     wordId <- insertWord conn w
@@ -49,8 +49,8 @@ insertWord conn w = do
   case results of
     [] -> do
       execute conn "INSERT INTO word (word) VALUES (?)" (Only w)
-      fmap fromIntegral $ lastInsertRowId conn
-    (Only id) : _ -> return id
+      fromIntegral <$> lastInsertRowId conn
+    Only id : _ -> return id
 
 -- | Get a word count of a page
 getWordCount :: String -> IO WordCount
