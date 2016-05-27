@@ -1,5 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
-module DB where
+module DB (
+  setup
+, insertWordCount
+, getWordCount
+) where
 
 import Data.String.Utils (strip)
 import Data.List.Split (splitOn)
@@ -25,6 +29,7 @@ runFile path = do
   mapM_ (execute_ conn . Query) statementList
   return ()
 
+-- | Insert a WordCount
 insertWordCount :: WordCount -> IO ()
 insertWordCount (WordCount t cs) = do
   conn <- defaultConnection
@@ -35,6 +40,7 @@ insertWordCount (WordCount t cs) = do
     wordId <- insertWord conn w
     execute conn "INSERT INTO page_word (page_id, word_id, count) VALUES (?, ?, ?)" (PageWordRow pageId wordId c)) cs
 
+-- | Insert a word and return it's ID, or return the ID of an existing word
 insertWord :: Connection -> String -> IO Int
 insertWord conn w = do
   results <- query conn "SELECT id FROM word WHERE word = ?" (Only w)
@@ -45,6 +51,7 @@ insertWord conn w = do
       fmap fromIntegral $ lastInsertRowId conn
     (Only id) : _ -> return id
 
+-- | Get a word count of a page
 getWordCount :: String -> IO WordCount
 getWordCount title = do
   conn <- defaultConnection
@@ -63,7 +70,6 @@ getWordCount title = do
 
   return $ WordCount title $ map (\(WordCountRow w c) -> (w, c)) results
 
-
 data PageWordRow = PageWordRow Int Int Int deriving Show
 instance FromRow PageWordRow where
   fromRow = PageWordRow <$> field <*> field <*> field
@@ -75,9 +81,4 @@ instance FromRow WordCountRow where
   fromRow = WordCountRow <$> field <*> field
 instance ToRow WordCountRow where
   toRow (WordCountRow pid wid) = toRow (pid, wid)
-
--- instance FromRow Int where
---   fromRow = Int <$> field
--- instance ToRow Int where
---   toRow i = i
 
