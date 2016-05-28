@@ -2,6 +2,7 @@
 module DB (
   setup
 , insertWordCount
+, insertWordCounts 
 , getWordCount
 , getAllWordCounts
 ) where
@@ -40,6 +41,11 @@ insertWordCount (WordCount t cs) = do
   mapM_ (\(w, c) -> do
     wordId <- insertWord conn w
     execute conn "INSERT INTO page_word (page_id, word_id, count) VALUES (?, ?, ?)" (PageWordRow pageId wordId c)) cs
+
+insertWordCounts :: [WordCount] -> IO ()
+insertWordCounts wcs = do
+  conn <- defaultConnection
+  withTransaction conn $ mapM_ insertWordCount wcs
 
 -- | Insert a word and return it's ID, or return the ID of an existing word
 insertWord :: Connection -> String -> IO Int
