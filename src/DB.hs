@@ -1,12 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 module DB (
-  setup
+  defaultConnection
+, setup
 , insertWordCount
 , insertWordCounts 
 , getWordCount
 , getAllWordCounts
 ) where
 
+import System.IO
 import Data.String.Utils (strip)
 import Data.List.Split (splitOn)
 import qualified Data.Text as DT (pack)
@@ -19,22 +21,20 @@ import Cluster.Words
 defaultConnection = open "res/database.db"
 
 -- | Setup the database tables
-setup :: IO ()
-setup = runFile "res/sql/setup.sql"
+setup :: Connection -> IO ()
+setup conn = runFile conn "res/sql/setup.sql"
 
 -- | Run the SQL in a file
-runFile :: FilePath -> IO ()
-runFile path = do
+runFile :: Connection -> FilePath -> IO ()
+runFile conn path = do
   statements <- readFile path
   let statementList = map DT.pack . filter (not.null) . map strip $ splitOn ";" statements
-  conn <- defaultConnection
   mapM_ (execute_ conn . Query) statementList
   return ()
 
 -- | Insert a WordCount
-insertWordCount :: WordCount -> IO ()
-insertWordCount (WordCount t cs) = do
-  conn <- defaultConnection
+insertWordCount :: Connection -> WordCount -> IO ()
+insertWordCount conn (WordCount t cs) = do
   execute conn "INSERT INTO page (name) VALUES (?)" $ Only t
   pageId <- fromIntegral <$> lastInsertRowId conn
 
@@ -42,10 +42,10 @@ insertWordCount (WordCount t cs) = do
     wordId <- insertWord conn w
     execute conn "INSERT INTO page_word (page_id, word_id, count) VALUES (?, ?, ?)" (PageWordRow pageId wordId c)) cs
 
-insertWordCounts :: [WordCount] -> IO ()
-insertWordCounts wcs = do
-  conn <- defaultConnection
-  withTransaction conn $ mapM_ insertWordCount wcs
+-- | Insert multiple word counts
+insertWordCounts :: Connection -> [WordCount] -> IO ()
+insertWordCounts conn wcs = do
+  withTransaction conn $ mapM_ (insertWordCount conn) wcs
 
 -- | Insert a word and return it's ID, or return the ID of an existing word
 insertWord :: Connection -> String -> IO Int
@@ -59,9 +59,8 @@ insertWord conn w = do
     Only id : _ -> return id
 
 -- | Get a word count of a page
-getWordCount :: String -> IO WordCount
-getWordCount title = do
-  conn <- defaultConnection
+getWordCount :: Connection -> String -> IO WordCount
+getWordCount conn title = do
   results <- query conn " \
     \  SELECT w.word, pw.count \
     \  FROM \
@@ -78,11 +77,10 @@ getWordCount title = do
   return $ WordCount title $ map (\(WordCountRow w c) -> (w, c)) results
 
 -- | Get all word counts in the database
-getAllWordCounts :: IO [WordCount]
-getAllWordCounts = do
-  conn <- defaultConnection
+getAllWordCounts :: Connection -> IO [WordCount]
+getAllWordCounts conn = do
   results <- query_ conn "SELECT name FROM page"
-  mapM (\(Only n) -> getWordCount n) results
+  mapM (\(Only n) -> getWordCount conn n) results
 
 data PageWordRow = PageWordRow Int Int Int deriving Show
 instance FromRow PageWordRow where
