@@ -11,23 +11,39 @@ import System.IO
 import System.Environment (getArgs)
 import System.Directory (getDirectoryContents)
 import System.FilePath ((</>))
+import Control.Concurrent.ParallelIO
 
 import Cluster.Kmeans
-import Cluster.Words (clusterTexts, UncountedText(..), WordCount(..))
+import Cluster.Words (clusterTexts, UncountedText(..), WordCount(..), mkWordCount)
 import Fetcher
 import Fetcher.Rss
 import Fetcher.Article
+import DB
 
 run :: IO ()
-run = do
-  rssLinks <- getRssLinks
-  links <- fmap (concat . map (take 3)) $ runOnUrls fetchRssLinks rssLinks 
-  articles <- runOnUrls fetchArticle (take 10 $ links)
+run = insertArticles
 
-  let uts = map (\(l, a) -> UncountedText l a) (zip links articles)
-  let clusters = clusterTexts kmeans 6 uts
+clusterFromDB :: IO ()
+clusterFromDB = do
+  return()
+  conn <- defaultConnection
+  wcs <- getAllWordCounts conn
 
-  mapM_ (print . map wcTitle) clusters
+  let clusters = kmeans 6 wcs
+
+  mapM_ (print . length . map wcTitle) clusters
 
   putStrLn "Done"
+
+insertArticles :: IO ()
+insertArticles = do
+  rssLinks <- getRssLinks
+  articleLinks <- concat <$> runOnUrls fetchRssLinks rssLinks
+  articles <- runOnUrls fetchArticle articleLinks
+
+  let uts = map (\(t, w) -> UncountedText t w) (zip articleLinks articles)
+  let wcs = map mkWordCount uts
+  
+  conn <- defaultConnection
+  insertWordCounts conn wcs
 
