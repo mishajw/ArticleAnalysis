@@ -48,6 +48,6 @@ getNewArticles = do
   articleLinks <- concat <$> runOnUrls fetchRssLinks rssLinks
   articles <- runOnUrls fetchArticle articleLinks
 
-  let uts = map (\(t, w) -> UncountedText t w) (zip articleLinks articles)
+  let uts = map (uncurry UncountedText) (zip articleLinks articles)
   return $ map mkWordCount uts
 
