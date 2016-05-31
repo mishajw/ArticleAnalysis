@@ -42,7 +42,7 @@ instance Clusterable WordCount where
       diff :: WCCollection -> Int
       diff (WCCollection wcc) =
         let cs = map snd wcc in
-        sum $ map (\is -> (maximum is) - (minimum is)) cs
+        sum $ map (\is -> maximum is - minimum is) cs
 
       -- | Sort a word count alphabetically
       sortWordCount :: WordCount -> WordCount
@@ -56,7 +56,7 @@ instance Clusterable WordCount where
     let WCCollection merged = foldl1 mergeWordCounts wccs in
     WordCount {
       wcTitle = ""
-    , wcCounts = map (\(s, is) -> (s, (sum is) `div` (length is))) merged
+    , wcCounts = map (\(s, is) -> s, sum is `div` length is) merged
     }
 
 -- | Convert from WordCount to WCCollection
@@ -72,7 +72,7 @@ mkWordCount ut =
   , wcCounts = (
       map (\xs -> (head xs, length xs)) .
       L.group . L.sort . words .
-      map toLower . filter (\c -> (isAlphaNum c) || (isSpace c))
+      map toLower . filter (\c -> isAlphaNum c || isSpace c)
     ) $ utText ut
   }
 
