@@ -12,7 +12,7 @@ fetchArticle url = do
   c <- getCursor url
   let elems = c $// getElements url
   let contents = foldMap content elems
-  return $ concat . (map unpack) $ contents
+  return $ concatMap unpack contents
 
 getElements :: String -> Cursor -> [Cursor]
 getElements url

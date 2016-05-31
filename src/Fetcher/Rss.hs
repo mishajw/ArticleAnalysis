@@ -37,6 +37,6 @@ findElements = element "item" >=> child
 findLinks :: [Cursor] -> [String]
 findLinks c =
   filter (not . null) .
-  map ((filter $ not.isSpace) . unpack) $
+  map (filter (not.isSpace) . unpack) $
     foldMap content c
 

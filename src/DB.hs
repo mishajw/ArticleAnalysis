@@ -44,7 +44,7 @@ insertWordCount conn (WordCount t cs) = do
 
 -- | Insert multiple word counts
 insertWordCounts :: Connection -> [WordCount] -> IO ()
-insertWordCounts conn wcs = do
+insertWordCounts conn wcs =
   withTransaction conn $ mapM_ (insertWordCount conn) wcs
 
 -- | Insert a word and return it's ID, or return the ID of an existing word
