@@ -76,6 +76,17 @@ mkWordCount ut =
     ) $ utText ut
   }
 
+wordsOperator :: [String] -> [String]
+wordsOperator ws = getNouns . map (map toLower) $ ws where
+  getNouns :: [String] -> [String]
+  getNouns (w : w' : ws) =
+    if w `elem` dets
+      then w' : getNouns ws
+      else getNouns ws
+  getNouns _ = []
+
+  dets = ["the", "a", "an", "those", "these", "this"]
+
 -- | Combine two word count collections
 mergeWordCounts :: WCCollection -> WCCollection -> WCCollection
 mergeWordCounts (WCCollection wc1) (WCCollection wc2) =
