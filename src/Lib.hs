@@ -21,29 +21,33 @@ import Fetcher.Article
 import DB
 
 run :: IO ()
-run = insertArticles
+run = do
+  insertArticles
+  clusters <- clusterFromDB
+  
+  mapM_ (print . length) clusters
 
-clusterFromDB :: IO ()
+clusterFromDB :: IO [[WordCount]]
 clusterFromDB = do
-  return()
   conn <- defaultConnection
   wcs <- getAllWordCounts conn
 
-  let clusters = kmeans 6 wcs
-
-  mapM_ (print . length . map wcTitle) clusters
-
-  putStrLn "Done"
+  return $ kmeans 6 wcs
 
 insertArticles :: IO ()
 insertArticles = do
+  wcs <- getNewArticles
+
+  conn <- defaultConnection
+  setup conn
+  insertWordCounts conn wcs
+
+getNewArticles :: IO [WordCount]
+getNewArticles = do
   rssLinks <- getRssLinks
   articleLinks <- concat <$> runOnUrls fetchRssLinks rssLinks
   articles <- runOnUrls fetchArticle articleLinks
 
   let uts = map (\(t, w) -> UncountedText t w) (zip articleLinks articles)
-  let wcs = map mkWordCount uts
-  
-  conn <- defaultConnection
-  insertWordCounts conn wcs
+  return $ map mkWordCount uts
 
