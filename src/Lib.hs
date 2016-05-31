@@ -1,11 +1,4 @@
-module Lib (
-  run
-, module Cluster.Kmeans
-, module Cluster.Words
-, module Fetcher
-, module Fetcher.Rss
-, module Fetcher.Article
-) where
+module Lib (run) where
 
 import System.IO
 import System.Environment (getArgs)

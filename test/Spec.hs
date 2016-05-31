@@ -5,7 +5,8 @@ import Data.List (sort)
 import GHC.Exts (sortWith)
 import System.IO
 
-import Lib
+import Cluster.Kmeans
+import Cluster.Words
 
 instance Clusterable Int where
   cmp a b = fromIntegral $ abs (a - b)

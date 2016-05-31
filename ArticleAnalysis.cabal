@@ -16,6 +16,13 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Lib
+                     , Cluster.Words
+                     , Cluster.Kmeans
+                     , Fetcher
+                     , Fetcher.Rss
+                     , Fetcher.Article
+                     , DB
+
   build-depends:       base >= 4.7 && < 5
                      , directory
                      , filepath
@@ -34,12 +41,7 @@ library
                      , sqlite-simple
                      , split
                      , MissingH
-  other-modules:       Cluster.Words
-                     , Cluster.Kmeans
-                     , Fetcher
-                     , Fetcher.Rss
-                     , Fetcher.Article
-                     , DB
+  -- other-modules:       
   default-language:    Haskell2010
 
 executable ArticleAnalysis-exe
