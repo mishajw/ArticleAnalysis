@@ -1,4 +1,4 @@
-module Lib (run) where
+module ArticleAnalysis (run) where
 
 import System.IO
 import System.Environment (getArgs)
