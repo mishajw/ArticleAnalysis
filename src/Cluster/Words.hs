@@ -9,6 +9,7 @@ import Cluster.Kmeans
 
 import qualified Data.List as L
 import Data.Char (toLower, isAlphaNum, isSpace)
+import Control.Arrow ((&&&), second)
 
 -- | Run the clustering on a list of text
 clusterTexts :: (Int -> [WordCount] -> [[WordCount]]) -> Int -> [UncountedText] -> [[WordCount]]
@@ -56,7 +57,7 @@ instance Clusterable WordCount where
     let WCCollection merged = foldl1 mergeWordCounts wccs in
     WordCount {
       wcTitle = ""
-    , wcCounts = map (\(s, is) -> s, sum is `div` length is) merged
+    , wcCounts = map (\(s, is) -> (s, sum is `div` length is)) merged
     }
 
 -- | Convert from WordCount to WCCollection
@@ -70,14 +71,14 @@ mkWordCount ut =
   WordCount {
     wcTitle = utTitle ut
   , wcCounts = (
-      map (\xs -> (head xs, length xs)) .
+      map (head &&& length) .
       L.group . L.sort . words .
       map toLower . filter (\c -> isAlphaNum c || isSpace c)
     ) $ utText ut
   }
 
 wordsOperator :: [String] -> [String]
-wordsOperator ws = getNouns . map (map toLower) $ ws where
+wordsOperator = getNouns . map (map toLower) where
   getNouns :: [String] -> [String]
   getNouns (w : w' : ws) =
     if w `elem` dets
@@ -95,13 +96,10 @@ mergeWordCounts (WCCollection wc1) (WCCollection wc2) =
 -- | Merge two word counts, must be sorted alphabetically
 mergeCounts ::  [(String, [Int])] -> [(String, [Int])] -> [(String, [Int])]
 mergeCounts [] [] = []
-mergeCounts cs@(_:_) [] = map (\(s, is) -> (s, 0 : is)) cs
-mergeCounts [] cs@(_:_) = map (\(s, is) -> (s, 0 : is)) cs
-mergeCounts c1@((s1, i1) : cs1) c2@((s2, i2) : cs2) =
-  if s1 == s2
-  then (s1, i1 ++ i2) : mergeCounts cs1 cs2
-  else
-    if s1 < s2
-    then (s1, 0 : i1) : mergeCounts cs1 c2
-    else (s2, 0 : i2) : mergeCounts c1 cs2
+mergeCounts cs@(_:_) [] = map (second ((:) 0)) cs
+mergeCounts [] cs@(_:_) = map (second ((:) 0)) cs
+mergeCounts c1@((s1, i1) : cs1) c2@((s2, i2) : cs2)
+  | s1 == s2   = (s1, i1 ++ i2) : mergeCounts cs1 cs2
+  | s1 < s2    = (s1, 0 : i1)   : mergeCounts cs1 c2
+  | otherwise  = (s2, 0 : i2)   : mergeCounts c1 cs2
 
