@@ -4,6 +4,7 @@ module DB (
 , setup
 , insertWordCount
 , insertWordCounts 
+, insertContents
 , getWordCount
 , getAllWordCounts
 ) where
@@ -58,6 +59,21 @@ insertWord conn w = do
       fromIntegral <$> lastInsertRowId conn
     Only id : _ -> return id
 
+insertContents :: Connection -> UncountedText -> IO ()
+insertContents conn (UncountedText t c) = do
+  pageId <- insertPage conn t
+  execute conn "INSERT INTO page_content (page_id, content) VALUES (?, ?)" (PageContentRow pageId c)
+
+insertPage :: Connection -> String -> IO Int
+insertPage conn t = do
+  results <- query conn "SELECT id FROM page WHERE name = ?" (Only t)
+
+  case results of
+    [] -> do
+      execute conn "INSERT INTO page (name) VALUES (?)" $ Only t
+      fromIntegral <$> lastInsertRowId conn
+    Only id : _ -> return id
+
 -- | Get a word count of a page
 getWordCount :: Connection -> String -> IO WordCount
 getWordCount conn title = do
@@ -93,4 +109,10 @@ instance FromRow WordCountRow where
   fromRow = WordCountRow <$> field <*> field
 instance ToRow WordCountRow where
   toRow (WordCountRow pid wid) = toRow (pid, wid)
+
+data PageContentRow = PageContentRow Int String deriving Show
+instance FromRow PageContentRow where
+  fromRow = PageContentRow <$> field <*> field
+instance ToRow PageContentRow where
+  toRow (PageContentRow pid contents) = toRow (pid, contents)
 
