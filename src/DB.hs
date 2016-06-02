@@ -7,6 +7,7 @@ module DB (
 , insertContents
 , getWordCount
 , getAllWordCounts
+, getAllContents
 ) where
 
 import System.IO
@@ -98,6 +99,13 @@ getAllWordCounts conn = do
   results <- query_ conn "SELECT name FROM page"
   mapM (\(Only n) -> getWordCount conn n) results
 
+getAllContents :: Connection -> IO [UncountedText]
+getAllContents conn =
+  query_ conn "\ 
+    \ SELECT P.name, C.content \
+    \ FROM page P, page_content C \
+    \ WHERE P.id = C.page_id"
+
 data PageWordRow = PageWordRow Int Int Int deriving Show
 instance FromRow PageWordRow where
   fromRow = PageWordRow <$> field <*> field <*> field
@@ -115,4 +123,9 @@ instance FromRow PageContentRow where
   fromRow = PageContentRow <$> field <*> field
 instance ToRow PageContentRow where
   toRow (PageContentRow pid contents) = toRow (pid, contents)
+
+instance FromRow UncountedText where
+  fromRow = UncountedText <$> field <*> field
+instance ToRow UncountedText where
+  toRow (UncountedText pid contents) = toRow (pid, contents)
 
