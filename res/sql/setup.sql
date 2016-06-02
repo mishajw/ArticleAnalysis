@@ -18,3 +18,11 @@ CREATE TABLE IF NOT EXISTS page_word (
   FOREIGN KEY (word_id) REFERENCES word(id)
 );
 
+CREATE TABLE IF NOT EXISTS page_content (
+  id INTEGER PRIMARY KEY,
+  page_id INTEGER,
+  content TEXT,
+
+  FOREIGN KEY (page_id) REFERENCES page(id)
+);
+
