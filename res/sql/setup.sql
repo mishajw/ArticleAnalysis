@@ -3,17 +3,17 @@ DROP TABLE IF EXISTS word;
 DROP TABLE IF EXISTS page_word;
 DROP TABLE IF EXISTS page_content;
 
-CREATE TABLE IF NOT EXISTS page (
+CREATE TABLE page (
   id INTEGER PRIMARY KEY,
   name TEXT
 );
 
-CREATE TABLE IF NOT EXISTS word (
+CREATE TABLE word (
   id INTEGER PRIMARY KEY,
   word TEXT UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS page_word (
+CREATE TABLE page_word (
   id INTEGER PRIMARY KEY,
   page_id INTEGER,
   word_id INTEGER,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS page_word (
   FOREIGN KEY (word_id) REFERENCES word(id)
 );
 
-CREATE TABLE IF NOT EXISTS page_content (
+CREATE TABLE page_content (
   id INTEGER PRIMARY KEY,
   page_id INTEGER,
   content TEXT,
