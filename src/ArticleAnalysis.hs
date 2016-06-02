@@ -16,9 +16,9 @@ import DB
 run :: IO ()
 run = do
   insertArticles
-  -- clusters <- clusterFromDB
-  --
-  -- mapM_ (print . length) clusters
+  clusters <- clusterFromDB
+
+  mapM_ (print . length) clusters
 
 clusterFromDB :: IO [[WordCount]]
 clusterFromDB = do
