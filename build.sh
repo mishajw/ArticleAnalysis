@@ -7,7 +7,7 @@ if [ -z $1 ]; then
 fi
 
 do_build() {
-  stack build
+  stack build --ghc-options="-W"
 }
 
 do_test() {
