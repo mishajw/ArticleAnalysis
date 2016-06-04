@@ -5,10 +5,8 @@ module Fetcher.Rss (
 , fetchRssLinks
 ) where
 
-import System.IO (putStrLn, readFile)
 import Data.Char (isSpace)
 import Data.Text (unpack)
-import Data.List (lines)
 import Text.XML.Cursor (Cursor, content, child, element, (>=>), ($//))
 
 import Fetcher (getCursor)

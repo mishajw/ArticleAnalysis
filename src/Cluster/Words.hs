@@ -72,7 +72,7 @@ mkWordCount ut =
     wcTitle = utTitle ut
   , wcCounts = (
       map (head &&& length) .
-      L.group . L.sort . words .
+      L.group . L.sort . wordsOperator . words .
       map toLower . filter (\c -> isAlphaNum c || isSpace c)
     ) $ utText ut
   }

@@ -1,11 +1,5 @@
 module ArticleAnalysis (run) where
 
-import System.IO
-import System.Environment (getArgs)
-import System.Directory (getDirectoryContents)
-import System.FilePath ((</>))
-import Control.Concurrent.ParallelIO
-
 import Cluster.Kmeans
 import Cluster.Words (clusterTexts, UncountedText(..), WordCount(..), mkWordCount)
 import Fetcher
@@ -15,10 +9,13 @@ import DB
 
 run :: IO ()
 run = do
-  insertArticles
-  clusters <- clusterFromDB
-
-  mapM_ (print . length) clusters
+  as <- getNewArticles
+  mapM_ print as
+  -- insertArticles
+  -- clusters <- clusterFromDB
+  --
+  -- mapM_ (print . length) clusters
+  return ()
 
 clusterFromDB :: IO [[WordCount]]
 clusterFromDB = do
@@ -40,8 +37,8 @@ insertArticles = do
 
 getNewArticles :: IO [UncountedText]
 getNewArticles = do
-  rssLinks <- getRssLinks
-  articleLinks <- concat <$> runOnUrls fetchRssLinks rssLinks
+  rssLinks <- take 1 <$> getRssLinks
+  articleLinks <- take 10 . concat <$> runOnUrls fetchRssLinks rssLinks
   articles <- runOnUrls fetchArticle articleLinks
   return $ zipWith UncountedText articleLinks articles
 

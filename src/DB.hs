@@ -10,13 +10,10 @@ module DB (
 , getAllContents
 ) where
 
-import System.IO
 import Data.String.Utils (strip)
 import Data.List.Split (splitOn)
 import qualified Data.Text as DT (pack)
-import Data.Int (Int)
 import Database.SQLite.Simple
-import Database.SQLite.Simple.FromRow
 
 import Cluster.Words
 

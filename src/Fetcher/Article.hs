@@ -3,7 +3,7 @@
 module Fetcher.Article where
 import Data.Text (unpack)
 import Data.List (isInfixOf)
-import Text.XML.Cursor (Cursor, descendant, attributeIs, content, child, element, checkName, ($//), (>=>), ($|), (&//), (&|))
+import Text.XML.Cursor (Cursor, descendant, attributeIs, content, child, checkName, ($//), (>=>))
 
 import Fetcher (getCursor)
 
