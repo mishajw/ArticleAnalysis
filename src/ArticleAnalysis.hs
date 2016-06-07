@@ -1,7 +1,7 @@
 module ArticleAnalysis (run) where
 
 import Cluster.Kmeans
-import Cluster.Words (clusterTexts, UncountedText(..), WordCount(..), mkWordCount)
+import Cluster.Words (UncountedText(..), WordCount(..), mkWordCount)
 import Fetcher
 import Fetcher.Rss
 import Fetcher.Article
@@ -9,13 +9,10 @@ import DB
 
 run :: IO ()
 run = do
-  as <- getNewArticles
-  mapM_ print as
-  -- insertArticles
-  -- clusters <- clusterFromDB
-  --
-  -- mapM_ (print . length) clusters
-  return ()
+  insertArticles
+  clusters <- clusterFromDB
+
+  mapM_ (print . length) clusters
 
 clusterFromDB :: IO [[WordCount]]
 clusterFromDB = do
@@ -37,8 +34,8 @@ insertArticles = do
 
 getNewArticles :: IO [UncountedText]
 getNewArticles = do
-  rssLinks <- take 1 <$> getRssLinks
-  articleLinks <- take 10 . concat <$> runOnUrls fetchRssLinks rssLinks
+  rssLinks <- getRssLinks
+  articleLinks <- concat <$> runOnUrls fetchRssLinks rssLinks
   articles <- runOnUrls fetchArticle articleLinks
   return $ zipWith UncountedText articleLinks articles
 
